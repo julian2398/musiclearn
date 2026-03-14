@@ -11,11 +11,20 @@ export function NotifProvider({ children }) {
 
   useEffect(() => {
     if (!user) return
-    const socket = getSocket()
-    socket.on('notification', (notif) => {
-      setNotifications(prev => [notif, ...prev])
-    })
-    return () => socket.off('notification')
+    let socketInstance = null
+
+    const connect = async () => {
+      socketInstance = await getSocket()
+      socketInstance.on('notification', (notif) => {
+        setNotifications(prev => [notif, ...prev])
+      })
+    }
+
+    connect()
+
+    return () => {
+      if (socketInstance) socketInstance.off('notification')
+    }
   }, [user])
 
   const markRead = (id) => {

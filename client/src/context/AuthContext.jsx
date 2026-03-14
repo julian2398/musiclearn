@@ -1,62 +1,81 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import api from '../services/api'
-import { trackEvent } from '../services/analytics'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth'
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore'
+import { auth, db } from '../services/firebase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser]     = useState(null)
+  const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('ml_token')
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-      api.get('/auth/me')
-        .then(res => setUser(res.data.user))
-        .catch(() => localStorage.removeItem('ml_token'))
-        .finally(() => setLoading(false))
-    } else {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const docSnap = await getDoc(doc(db, 'usuarios', firebaseUser.uid))
+        if (docSnap.exists()) {
+          setUser({ uid: firebaseUser.uid, id: firebaseUser.uid, ...docSnap.data() })
+        }
+      } else {
+        setUser(null)
+      }
       setLoading(false)
-    }
+    })
+    return unsubscribe
   }, [])
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password })
-    const { token, user } = res.data
-    localStorage.setItem('ml_token', token)
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    setUser(user)
-    trackEvent('login', { method: 'email', role: user.role })
-    return user
+  const register = async ({ name, email, password, role }) => {
+    const credential = await createUserWithEmailAndPassword(auth, email, password)
+    const uid = credential.user.uid
+    const userData = {
+      name,
+      email,
+      role,
+      instrument: '',
+      level: '',
+      modality: '',
+      goal: '',
+      phone: '',
+      bio: '',
+      avatar_url: '',
+      onboarding_complete: false,
+      created_at: new Date().toISOString(),
+    }
+    await setDoc(doc(db, 'usuarios', uid), userData)
+    const newUser = { uid, id: uid, ...userData }
+    setUser(newUser)
+    return newUser
   }
 
-  const register = async (data) => {
-    const res = await api.post('/auth/register', data)
-    const { token, user } = res.data
-    localStorage.setItem('ml_token', token)
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    setUser(user)
-    trackEvent('sign_up', { role: data.role })
-    return user
+  const login = async (email, password) => {
+    const credential = await signInWithEmailAndPassword(auth, email, password)
+    const docSnap = await getDoc(doc(db, 'usuarios', credential.user.uid))
+    if (!docSnap.exists()) throw new Error('Usuario no encontrado')
+    const userData = { uid: credential.user.uid, id: credential.user.uid, ...docSnap.data() }
+    setUser(userData)
+    return userData
   }
 
   const updateProfile = async (data) => {
-    const res = await api.put('/auth/profile', data)
-    setUser(prev => ({ ...prev, ...res.data.user }))
-    return res.data.user
+    if (!user?.uid) throw new Error('No hay sesión activa')
+    await updateDoc(doc(db, 'usuarios', user.uid), data)
+    setUser(prev => ({ ...prev, ...data }))
+    return { ...user, ...data }
   }
 
   const logout = () => {
-    localStorage.removeItem('ml_token')
-    delete api.defaults.headers.common['Authorization']
+    signOut(auth)
     setUser(null)
-    trackEvent('logout')
   }
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   )
 }
