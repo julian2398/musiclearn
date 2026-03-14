@@ -322,3 +322,47 @@ select.form-input {
 
 /* ---- Toast overrides ---- */
 .toast-success { background: var(--color-bg-elevated) !important; color: var(--color-text-primary) !important; border: 1px solid var(--color-success) !important; }
+
+/* ============================================
+   RESPONSIVE MOBILE â€” max 768px
+   ============================================ */
+@media (max-width: 768px) {
+  /* Layout */
+  .app-layout { flex-direction: column; }
+  .main-content { padding: 1rem !important; padding-top: 64px !important; }
+
+  /* Grids colapsan a 1 columna */
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; }
+
+  /* TipografÃ­a */
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.35rem !important; }
+
+  /* Cards */
+  .card, .card-elevated { padding: 1rem !important; }
+
+  /* Navbar landing */
+  nav .btn-outline { display: none; }
+
+  /* Tablas horizontales en mÃ³vil */
+  table { font-size: 0.78rem !important; }
+  th, td { padding: 6px 6px !important; }
+
+  /* Botones mÃ¡s grandes para touch */
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 36px; padding: 6px 12px !important; }
+
+  /* Dashboard KPI cards â€” 2 columnas en mÃ³vil */
+  .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Ocultar columnas de tabla menos importantes en mÃ³vil */
+  .hide-mobile { display: none !important; }
+
+  /* Onboarding */
+  .onboarding-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: 1fr !important; }
+  h1 { font-size: 1.5rem !important; }
+}
