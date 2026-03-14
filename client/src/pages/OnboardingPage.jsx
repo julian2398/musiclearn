@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
@@ -75,8 +75,6 @@ export default function OnboardingPage() {
 
   return (
     <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', background:'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,149,108,0.07), transparent)' }}>
-
-      {/* Top bar */}
       <div style={{ padding:'1.25rem 2rem', display:'flex', alignItems:'center', gap:'1rem', borderBottom:'1px solid var(--color-border)' }}>
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
           <span style={{ fontSize:'1.2rem' }}>🎵</span>
@@ -94,7 +92,6 @@ export default function OnboardingPage() {
         </button>
       </div>
 
-      {/* Content */}
       <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:'2rem' }}>
         <div style={{ width:'100%', maxWidth:560, animation:'fadeIn 0.35s ease' }} key={step}>
           {step === 1 && <StepWelcome user={user} onNext={next} />}
@@ -113,7 +110,6 @@ export default function OnboardingPage() {
   )
 }
 
-// ── Thinking Aloud wrapper ──
 function StepWithTA({ stepNum, title, children }) {
   const [ta, setTA] = useState('')
   return (
@@ -128,7 +124,6 @@ function StepWithTA({ stepNum, title, children }) {
   )
 }
 
-// ── Encuesta interceptada ──
 function AbandonSurvey({ step, stepName, onConfirm, onCancel }) {
   const [q1, setQ1] = useState('')
   const [q2, setQ2] = useState('')
@@ -172,7 +167,6 @@ function AbandonSurvey({ step, stepName, onConfirm, onCancel }) {
   )
 }
 
-// ── NPS Final ──
 function NPSSurvey({ onSubmit }) {
   const [score, setScore] = useState(null)
   const [comment, setComment] = useState('')
@@ -195,14 +189,27 @@ function NPSSurvey({ onSubmit }) {
           <label className="form-label">¿Qué fue lo más difícil del proceso? (opcional)</label>
           <textarea className="form-input" rows={2} value={comment} onChange={e=>setComment(e.target.value)} style={{ resize:'none' }} />
         </div>
-        <button className="btn btn-primary" style={{ width:'100%' }} onClick={() => onSubmit(score, comment)} disabled={score===null}>Entrar a mi portal 🚀</button>
-        <button className="btn btn-ghost btn-sm" style={{ marginTop:'0.5rem', width:'100%', fontSize:'0.78rem' }} onClick={() => onSubmit(null, '')}>Omitir</button>
+        <button className="btn btn-primary" style={{ width:'100%' }} onClick={() => onSubmit(score, comment)} disabled={score===null}>
+          Entrar a mi portal 🚀
+        </button>
+        <a
+          href="https://forms.gle/DwCFcMPEJissX5mm8"
+          target="_blank"
+          rel="noreferrer"
+          className="btn btn-outline"
+          style={{ width:'100%', justifyContent:'center', marginTop:'0.5rem', color:'var(--color-accent)', borderColor:'var(--color-accent)', textDecoration:'none', display:'flex' }}
+          onClick={() => onSubmit(score ?? 0, comment)}
+        >
+          📋 Completar encuesta de usabilidad
+        </a>
+        <button className="btn btn-ghost btn-sm" style={{ marginTop:'0.5rem', width:'100%', fontSize:'0.78rem' }} onClick={() => onSubmit(null, '')}>
+          Omitir encuesta
+        </button>
       </div>
     </div>
   )
 }
 
-// ── Step sub-components ──
 function StepWelcome({ user, onNext }) {
   return (
     <div style={{ textAlign:'center' }}>
