@@ -1,0 +1,14 @@
+{
+  "name": "musiclearn-platform",
+  "version": "1.0.0",
+  "description": "Plataforma e-learning para clases de música en Bogotá",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
