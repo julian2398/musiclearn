@@ -290,6 +290,8 @@ export default function LandingPage() {
 /* ── Sub-components ── */
 
 function Navbar() {
+  const [menuOpen, setMenuOpen] = React.useState(false)
+
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
@@ -300,16 +302,53 @@ function Navbar() {
       borderBottom: '1px solid var(--color-border)',
       height: 64
     }}>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--color-text-primary)' }}>
+      {/* Logo */}
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--color-text-primary)', textDecoration: 'none' }}>
         <span style={{ fontSize: '1.3rem' }}>🎵</span>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.15rem' }}>MusicLearn</span>
       </Link>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <a href="#instrumentos" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>Instrumentos</a>
-        <a href="#testimonios" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>Testimonios</a>
+
+      {/* Desktop links */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }} className="nav-desktop">
+        <a href="#instrumentos" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', textDecoration: 'none' }}>Instrumentos</a>
+        <a href="#testimonios" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', textDecoration: 'none' }}>Testimonios</a>
         <Link to="/login" className="btn btn-ghost btn-sm">Ingresar</Link>
         <Link to="/register" className="btn btn-primary btn-sm">Reserva tu clase</Link>
       </div>
+
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="nav-hamburger"
+        style={{ display: 'none', background: 'transparent', border: 'none', color: 'var(--color-text-primary)', fontSize: '1.5rem', cursor: 'pointer', padding: 4 }}
+      >
+        {menuOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Mobile menu dropdown */}
+      {menuOpen && (
+        <div style={{
+          position: 'fixed', top: 64, left: 0, right: 0,
+          background: 'rgba(10,10,15,0.98)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid var(--color-border)',
+          padding: '1.5rem',
+          display: 'flex', flexDirection: 'column', gap: '1rem',
+          zIndex: 99
+        }}>
+          <a href="#instrumentos" onClick={() => setMenuOpen(false)} style={{ fontSize: '1rem', color: 'var(--color-text-secondary)', textDecoration: 'none', padding: '0.5rem 0', borderBottom: '1px solid var(--color-border)' }}>Instrumentos</a>
+          <a href="#testimonios" onClick={() => setMenuOpen(false)} style={{ fontSize: '1rem', color: 'var(--color-text-secondary)', textDecoration: 'none', padding: '0.5rem 0', borderBottom: '1px solid var(--color-border)' }}>Testimonios</a>
+          <Link to="/login" className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ textAlign: 'center', marginTop: '0.5rem' }}>Ingresar</Link>
+          <Link to="/register" className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ textAlign: 'center' }}>🎸 Reserva tu clase</Link>
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 640px) {
+          .nav-desktop { display: none !important; }
+          .nav-hamburger { display: block !important; }
+        }
+      `}</style>
     </nav>
   )
 }
