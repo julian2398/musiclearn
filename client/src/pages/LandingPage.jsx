@@ -388,8 +388,8 @@ function Footer() {
             <h4 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--color-text-secondary)' }}>Contacto</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
               <span>📍 Bogotá, Colombia</span>
-              <span>📧 hola@musiclearn.co</span>
-              <span>📱 WhatsApp disponible</span>
+              <span>📧 julian.cortez2010@gmail.com</span>
+              <span>📱 WhatsApp disponible - + 57 3212350490</span>
             </div>
           </div>
         </div>
